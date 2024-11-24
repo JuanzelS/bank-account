@@ -1,48 +1,70 @@
-# Function to load user data from a file and return it as a list of dictionaries
-def load_data(filename):
-    users = []  # List to hold user dictionaries
-    with open(filename, 'r') as file:
-        for line in file:
-            # Split the line by commas into username, password, full_name, balance
-            data = line.strip().split(',')
-            user = {
-                'username': data[0],
-                'password': data[1],
-                'full_name': data[2],
-                'balance': float(data[3])  # Convert balance to a float
-            }
-            users.append(user)
-    return users
+import random
 
-# Function to authenticate a user based on username and password
-def login(users, username, password):
-    for user in users:
-        if user['username'] == username and user['password'] == password:
-            return user  # Return the user dictionary if login is successful
-    return None  # Return None if username or password is incorrect
+class BankAccount:
+    def __init__(self, full_name):
+        self.full_name = full_name
+        self.account_number = random.randint(10000000, 99999999)
+        self.balance = 0
 
-# Function to display user's full name and balance
-def display_user_info(user):
-    return f"Name: {user['full_name']}\nBalance: {user['balance']}"
+    def deposit(self, amount):
+        self.balance += amount
+        print(f"Amount deposited: ${amount:.2f}, new balance: ${self.balance:.2f}")
 
-# Main function to run the program
-def main():
-    # Load the data from the file
-    users = load_data('data.txt')
-    
-    # Get username and password from the user
-    username = input("Enter Name: ")
-    password = input("Enter password: ")
-    
-    # Try to login
-    user = login(users, username, password)
-    
-    # If user is found, display their information
-    if user:
-        print(display_user_info(user))
-    else:
-        print("User name and password not found")
+    def withdraw(self, amount):
+        if amount > self.balance:
+            print("Insufficient funds. Charging a $10 overdraft fee.")
+            self.balance -= 10
+        else:
+            self.balance -= amount
+        print(f"Amount withdrawn: ${amount:.2f}, new balance: ${self.balance:.2f}")
 
-# Call the main function to run the program
+    def get_balance(self):
+        print(f"Current balance: ${self.balance:.2f}")
+        return self.balance
+
+    def add_interest(self):
+        interest = self.balance * 0.00083
+        self.balance += interest
+        print(f"Interest added: ${interest:.2f}, new balance: ${self.balance:.2f}")
+
+    def print_statement(self):
+        masked_account_number = "****" + str(self.account_number)[-4:]
+        print(f"""
+        {self.full_name}
+        Account No.: {masked_account_number}
+        Balance: ${self.balance:.2f}
+        """)
+
+
+# Example usage of the BankAccount class
 if __name__ == "__main__":
-    main()
+    # Create a new account for Mitchell
+    mitchell_account = BankAccount("Mitchell")
+
+    # Deposit $400,000
+    mitchell_account.deposit(400000)
+
+    # Print account statement
+    mitchell_account.print_statement()
+
+    # Add interest to the account
+    mitchell_account.add_interest()
+
+    # Print account statement after adding interest
+    mitchell_account.print_statement()
+
+    # Withdraw $150
+    mitchell_account.withdraw(150)
+
+    # Print account statement after withdrawal
+    mitchell_account.print_statement()
+
+    # Create additional accounts as examples
+    jane_account = BankAccount("Jane Doe")
+    jane_account.deposit(2500)
+    jane_account.print_statement()
+
+    john_account = BankAccount("John Smith")
+    john_account.deposit(500)
+    john_account.add_interest()
+    john_account.print_statement()
