@@ -1,0 +1,5 @@
+test = "aman,1234,Andy Allman,1000".split(',')
+print(test[0]) # aman
+print(test[1]) # 1234
+print(test[2]) # Andy Allman
+print(test[3]) # 1000
